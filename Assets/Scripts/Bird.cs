@@ -13,6 +13,8 @@ public class Bird : MonoBehaviour
     public GameObject YellowBird;
     public GameObject RedBird;
     public GameObject BlueBird;
+    public GameObject DayBackground;
+    public GameObject NightBackground;
     public float speed;
     private int score = 0;
     //private AudioSource audio;
@@ -22,6 +24,7 @@ public class Bird : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         Pipe.speed = speed;
         RandomizeBird();
+        RandomizeBackground();
         
         //audio = GameObject.Find("ScoreSound").GetComponent<AudioSource>();
     }
@@ -40,6 +43,20 @@ public class Bird : MonoBehaviour
                 BlueBird.SetActive(true);
                 break;
         }
+    }
+    void RandomizeBackground()
+    {
+        int randomIndex = Random.Range(1, 3);
+        switch (randomIndex)
+        {
+            case 1:
+                DayBackground.SetActive(true);
+                break;
+            case 2:
+                NightBackground.SetActive(true);
+                break;
+        }
+
     }
     void Update()
     {
