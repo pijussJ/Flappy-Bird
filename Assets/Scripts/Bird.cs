@@ -13,20 +13,20 @@ public class Bird : MonoBehaviour
     public GameObject YellowBird;
     public GameObject RedBird;
     public GameObject BlueBird;
-    public GameObject DayBackground;
-    public GameObject NightBackground;
+
     public float speed;
     private int score = 0;
-    //private AudioSource audio;
+    public GameObject flashEffect;
+    public AudioSource jumpSound;
+    public AudioSource deathSound;
+    public GameObject tutorialScreen;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        Pipe.speed = speed;
         RandomizeBird();
-        RandomizeBackground();
-        
-        //audio = GameObject.Find("ScoreSound").GetComponent<AudioSource>();
+        Pipe.speed = 0;
+        rb.gravityScale = 0;
     }
     void RandomizeBird()
     {
@@ -44,28 +44,23 @@ public class Bird : MonoBehaviour
                 break;
         }
     }
-    void RandomizeBackground()
-    {
-        int randomIndex = Random.Range(1, 3);
-        switch (randomIndex)
-        {
-            case 1:
-                DayBackground.SetActive(true);
-                break;
-            case 2:
-                NightBackground.SetActive(true);
-                break;
-        }
-
-    }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && speed > 0)
         {
-            rb.velocity = Vector2.up * jumpSpeed;
+            Jump();
+            jumpSound.Play();
+            Pipe.speed = speed;
+            tutorialScreen.SetActive(false);
         }
+
         transform.eulerAngles = new Vector3(0, 0, rb.velocity.y * rotateRatio);
     
+    }
+    void Jump()
+    {
+        rb.velocity = Vector2.up * jumpSpeed;
+        rb.gravityScale = 3;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -75,11 +70,11 @@ public class Bird : MonoBehaviour
     {
         Pipe.speed = 0;
         jumpSpeed = 0;
+        PlayerPrefs.SetInt("Score", score);
+        flashEffect.SetActive(true);
         Invoke("ShowMenu", 1f);
+        deathSound.Play();
         
-
-        //var currentScene = SceneManager.GetActiveScene().name;
-        //SceneManager.LoadScene(currentScene);
     }
     void ShowMenu()
     {
@@ -90,6 +85,5 @@ public class Bird : MonoBehaviour
     {
         score++;
         scoreText.text = score.ToString();
-        //audio.Play();
     }
 }
